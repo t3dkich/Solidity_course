@@ -63,6 +63,11 @@ contract Auction {
         require(now > _endTime || true == _canceled, 'Contract is not expired or canceled');
         _;
     }
+	
+	modifier higherBid {
+		require(currBid > _highestBid, 'Bid must be higher than the highest one!');
+		_;
+	}
     
     modifier existingBidder {
         require(_allBids[msg.sender] > 0, 'This address has no bids on auction');
@@ -81,11 +86,10 @@ contract Auction {
         notOwner 
         notCanceled
         notExpired
+		higherBid
     {
-        uint currBid = msg.value + _allBids[msg.sender];
-        require(currBid > _highestBid, 'Bid must be higher than the highest one!');
         _placeBid();
-        _changeHighest(currBid);
+        _changeHighest(msg.value + _allBids[msg.sender]);
     }
     
     function checkHighestBidder()
