@@ -64,7 +64,7 @@ contract Auction {
         _;
     }
 	
-	modifier higherBid {
+	modifier higherBid(uint currBid) {
 		require(currBid > _highestBid, 'Bid must be higher than the highest one!');
 		_;
 	}
@@ -86,7 +86,7 @@ contract Auction {
         notOwner 
         notCanceled
         notExpired
-		higherBid
+		higherBid(msg.value + _allBids[msg.sender])
     {
         _placeBid();
         _changeHighest(msg.value + _allBids[msg.sender]);
