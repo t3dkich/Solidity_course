@@ -9,28 +9,32 @@ contract Auction {
     
     address _highestBidder;
     uint _highestBid;
+    uint _bidDifference;
     mapping(address => uint) _allBids;
+    mapping(address => uint) _biddersLatestBid;
     
-    constructor(uint startAfterSeconds, uint duration)
+    constructor(uint startAfterSeconds, uint duration, uint bidDifference)
         public
         payable
-        validInitialParameters(startAfterSeconds, duration)
+        validInitialParameters(startAfterSeconds, duration, bidDifference)
     {
         _startTime = now + startAfterSeconds;
         _endTime = now + startAfterSeconds + duration;
         _owner = msg.sender;
         _canceled = false;
+        _bidDifference = bidDifference;
         emit createOwner(msg.sender);
     }
     
     event createOwner(address indexed owner);
     event cancel(string indexed phrase, bool indexed closed);
-    event bidInfo(address indexed bidder, uint indexed value);
+    event bidInfo(address indexed bidder, uint indexed value, uint indexed blockTime);
     event withdraw(address indexed selfAddress, address indexed receiver, uint indexed value);
     
-    modifier validInitialParameters(uint startAfterSeconds, uint duration) {
-        require(startAfterSeconds > 0, 'Seconds must be a positive number!');
+    modifier validInitialParameters(uint startAfterSeconds, uint duration, uint bidDifference) {
+        require(startAfterSeconds > 0, 'Seconds must be positive number!');
         require(duration > 0, 'Duration must be positive number!');
+        require(bidDifference > 0, 'Bid difference must be positive number!');
         _;
     }
     
@@ -65,8 +69,17 @@ contract Auction {
     }
 	
 	modifier higherBid(uint currBid) {
-		require(currBid > _highestBid, 'Bid must be higher than the highest one!');
+	    if (_highestBid > 0) {
+	        require(currBid >= _highestBid + _bidDifference, 'Bid is too low to be accepted!');
+	    }
 		_;
+	}
+	
+	modifier after1hour {
+	    if (_biddersLatestBid[msg.sender] > 0) {
+	        require(now > _biddersLatestBid[msg.sender] + 1 hours, 'You have to wait 1 hour before placing new bid!');   
+	    }
+	    _;
 	}
     
     modifier existingBidder {
@@ -87,18 +100,17 @@ contract Auction {
         notCanceled
         notExpired
 		higherBid(msg.value + _allBids[msg.sender])
+		after1hour
     {
         _placeBid();
-        _changeHighest(msg.value + _allBids[msg.sender]);
+        _changeHighest(_allBids[msg.sender]);
     }
     
     function checkHighestBidder()
         public
         notCanceled
-        returns (address)
     {
-        emit bidInfo(_highestBidder, _highestBid);
-        return _highestBidder;
+        emit bidInfo(_highestBidder, _highestBid, _biddersLatestBid[msg.sender]);
     }
     
     function cancelAuction() 
@@ -126,7 +138,6 @@ contract Auction {
     {
         _highestBid = currBid;
         _highestBidder = msg.sender;
-        emit bidInfo(_highestBidder, _highestBid);
     }
     
     function _cancelAuchtion() 
@@ -140,7 +151,8 @@ contract Auction {
         internal 
     {
         _allBids[msg.sender] += msg.value;
-        emit bidInfo(msg.sender, _allBids[msg.sender]);
+        _biddersLatestBid[msg.sender] = now;
+        emit bidInfo(msg.sender, _allBids[msg.sender], _biddersLatestBid[msg.sender]);
     }
     
     function _withdrawOnCanceled() 
