@@ -41,7 +41,7 @@ contract Crawdsale {
     
     modifier setState {
         if (uint(_state) == 0) {
-            if (now > _bornOn + 30 seconds) {
+            if (now > _bornOn + 5 minutes) {
                 _state = State.Exchange;
             }
         }
