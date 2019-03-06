@@ -95,10 +95,11 @@ library MemberOperations {
         data._members[user] = member;
     }
     
-    function removeMember(MembersData storage data, address user) 
+    function removeMember(MembersData storage data, address user, HelperValues storage helperValues) 
         public 
     {
         data._isMemberArr[user] = false;
+        helperValues.allMembers -= 1;
     }
     
     function addMemberForVote(CurrentVote storage currentVote, address user)
@@ -236,13 +237,7 @@ contract Voting is Maths {
         justMembers(userAddress)
         oneHourRule(userAddress)
     {
-        members.removeMember(userAddress);
-    }
-    
-    event neshto(uint fullAmount, uint timestamp, uint currentAmount);
-    
-    function checkMember(address user) public {
-        emit neshto(members._members[user].fullAmount, members._members[user].lastDonationTimestamp, members._members[user].lastAmount);
+        members.removeMember(userAddress, helperValues);
     }
     
     function donate() 
