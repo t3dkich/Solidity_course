@@ -1,0 +1,28 @@
+{{#each jobs}}
+<div class="card w-75">
+    <div class="card-body">
+        <input type="hidden" value="{{userHash}}">
+        <input type="hidden" value="{{id}}">
+        <input type="hidden" value="{{reward}}">
+        <h5 class="card-title">Title: {{title}}</h5>
+        <p class="card-text">Job description: {{description}}</p>
+        {{#unless isFinished}}
+        <button onclick="showViewService.showAddSolution(event)" class="btn btn-primary">Show solutions</a>
+        {{else}}
+        <button disabled class="btn btn-success">Job finished and paid for</a>
+        {{/unless}}
+
+    </div>
+    {{#each solutions}}
+    <div style="display: none" class="form-group">
+        <input type="hidden" value="{{userAddress}}">
+        <input type="hidden" value="{{@index}}">
+        <label for="jobDescription">Solution of the job</label>
+        <textarea class="form-control" disabled id="jobSolution" rows="8">{{solution}}</textarea>
+        <button onclick="helperService.payForSolution(event)" class="btn btn-success">Accept and Pay</a>
+
+    </div>
+    {{/each}}
+</div>
+<br>
+{{/each}}
