@@ -58,9 +58,9 @@ const helperService = (() => {
         
 
         // ne zadalje
-        // let trye = await node.cat(finalJobsHash[0].hash)
-        // console.log(JSON.parse(trye))
-        // console.log(JSON.parse(await node.cat(userHash)))
+        let trye = await node.cat(finalJobsHash[0].hash)
+        console.log(JSON.parse(trye))
+        console.log(JSON.parse(await node.cat(userHash)))
 
     }
 

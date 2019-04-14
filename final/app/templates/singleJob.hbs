@@ -3,8 +3,9 @@
     <div class="card-body">
         <input type="hidden" value="{{userHash}}">
         <input type="hidden" value="{{id}}">
-        <h5 class="card-title">{{title}}</h5>
-        <p class="card-text">{{description}}</p>
+        <h5 class="card-title">Title: {{title}}</h5>
+        <p class="card-text">Job Description: {{description}}</p>
+        <p class="card-text">Job Reward: {{reward}} Ether</p>
         {{#unless isFinished}}
         <button onclick="showViewService.showAddSolution(event)" class="btn btn-primary">Add Solution</a>
         {{else}}

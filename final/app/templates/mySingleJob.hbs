@@ -6,8 +6,10 @@
         <input type="hidden" value="{{reward}}">
         <h5 class="card-title">Title: {{title}}</h5>
         <p class="card-text">Job description: {{description}}</p>
+        <p class="card-text">Job Reward: {{reward}} Ether</p>
         {{#unless isFinished}}
-        <button onclick="showViewService.showAddSolution(event)" class="btn btn-primary">Show solutions</a>
+        <button onclick="showViewService.showAddSolution(event)" class="btn btn-primary">
+            {{#if solutions}}Show solutions{{else}}No Solutions Yet{{/if}}</a>
         {{else}}
         <button disabled class="btn btn-success">Job finished and paid for</a>
         {{/unless}}
@@ -18,6 +20,7 @@
         <input type="hidden" value="{{userAddress}}">
         <input type="hidden" value="{{@index}}">
         <label for="jobDescription">Solution of the job</label>
+        <p class="card-text">User Address: {{userAddress}}</p>
         <textarea class="form-control" disabled id="jobSolution" rows="8">{{solution}}</textarea>
         <button onclick="helperService.payForSolution(event)" class="btn btn-success">Accept and Pay</a>
 

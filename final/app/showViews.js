@@ -30,7 +30,6 @@ const showViewService = (() => {
                 allJobs.push(job)
             }    
         }
-
         let ctx = {jobs: allJobs}
         $('#myJobs').hide()
         $('#job').hide()
